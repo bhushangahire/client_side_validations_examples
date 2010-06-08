@@ -30,7 +30,7 @@
 
 > rails s -p 4002
 
-## 4. Now open your browser and connext:
+## 4. Now open your browser and connect:
 
 Rails 2 example: http://localhost:4001
 
