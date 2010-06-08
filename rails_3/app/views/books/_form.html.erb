@@ -1,0 +1,25 @@
+<%= form_for(@book) do |f| %>
+  <% if @book.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@book.errors.count, "error") %> prohibited this book from being saved:</h2>
+    <ul>
+    <% @book.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :author %><br />
+    <%= f.text_field :author %>
+  </div>
+  <div class="field">
+    <%= f.label :volume %><br />
+    <%= f.text_field :volume %>
+  </div>
+  <%= f.client_side_validations :url => new_book_path(:format => :json)%>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

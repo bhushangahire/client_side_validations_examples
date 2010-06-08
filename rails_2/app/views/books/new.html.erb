@@ -1,0 +1,20 @@
+<h1>New book</h1>
+
+<% form_for(@book) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :author %><br />
+    <%= f.text_field :author %>
+  </p>
+  <p>
+    <%= f.label :volume %><br />
+    <%= f.text_field :volume %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+    <%= f.client_side_validations :url => new_book_path(:format => :json) %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', books_path %>
