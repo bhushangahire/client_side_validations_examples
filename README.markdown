@@ -12,6 +12,8 @@
 
 > rvm default@global
 
+> gem install bundler
+
 > cd rails_2
 
 > bundle install
