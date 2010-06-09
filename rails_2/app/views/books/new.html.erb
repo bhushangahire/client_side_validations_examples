@@ -1,6 +1,6 @@
 <h1>New book</h1>
 
-<% form_for(@book) do |f| %>
+<% form_for(@book, :validations => { :url => new_book_path(:format => :json) }) do |f| %>
   <%= f.error_messages %>
 
   <p>
@@ -13,7 +13,6 @@
   </p>
   <p>
     <%= f.submit 'Create' %>
-    <%= f.client_side_validations :url => new_book_path(:format => :json) %>
   </p>
 <% end %>
 
