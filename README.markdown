@@ -4,7 +4,7 @@
 
 The .rvmrc files in rails_2/ and rails_3/ will automatically create and switch to rails_x gemsets with your RVM default Ruby
 
-## 2. And use Bundler to install the required gems:
+## 2. Use Bundler to install the required gems:
 
 > rvm default@global
 
@@ -18,7 +18,7 @@ The .rvmrc files in rails_2/ and rails_3/ will automatically create and switch t
 
 > bundle install
 
-## 3. And you can run the servers
+## 3. Run the servers
 
 > cd rails_2
 
