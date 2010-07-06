@@ -2,11 +2,7 @@
 
 ## 1. Make things easy and use [RVM](http://rvm.beginrescueend.com/) to setup the gemsets:
 
-> rvm default
-
-> rvm gemset create rails_2
-
-> rvm gemset create rails_3
+The .rvmrc files in rails_2/ and rails_3/ will automatically create and switch to rails_x gemsets with your RVM default Ruby
 
 ## 2. And use Bundler to install the required gems:
 
