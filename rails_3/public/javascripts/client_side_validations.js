@@ -1,18 +1,27 @@
 if (typeof(jQuery) != "undefined") {
-
+  jQuery.validator.addMethod("format", function(value, element, params) { 
+    var pattern = new RegExp(params, "i");
+    return this.optional(element) || pattern.test(value); 
+  }, jQuery.validator.format("Invalid format."));
+  
   $.extend($.fn, {
     clientSideValidations: function() {
-      var form    = this;
-      var object  = form.attr('object-csv');
-      var url     = '/' + object + '/validations.json'
-      var id      = form[0].id;
+      var form         = this;
+      var object       = form.attr('object-csv');
+      var edit_pattern = new RegExp('^edit_' + object + '_(.+)', 'i');
+      var url          = '/validations.json?model=' + object;
+      var id           = form[0].id;
+      var object_id    = null;
+      if (edit_pattern.test(id)) {
+        object_id = Number(edit_pattern.exec(id)[1]);
+      }
       var adapter = 'jquery.validate';
       if (/new/.test(id)) {
         id = /new_(\w+)/.exec(id)[1]
       } else if (/edit/.test(id)) {
         id = /edit_(\w+)_\d+/.exec(id)[1]
       }
-      var client = new ClientSideValidations(id, adapter)
+      var client = new ClientSideValidations(id, adapter, object_id)
       $.getJSON(url, function(json) {
         var validations = client.adaptValidations(json);
         form.validate({
@@ -28,7 +37,7 @@ if (typeof(jQuery) != "undefined") {
   });
 }
 
-ClientSideValidations = function(id, adapter) {
+ClientSideValidations = function(id, adapter, object_id) {
   this.id                = id;
   this.adapter           = adapter;
   this.adaptValidations  = function(validations) {
@@ -63,6 +72,19 @@ ClientSideValidations = function(id, adapter) {
                 value = this.validations[attr][validation]['maximum'];
               }
               break;
+            case 'uniqueness':
+              rule  = 'remote';
+              value = {
+                url: '/validations/uniqueness.json',
+                data: {}
+              }
+              if(object_id) {
+                value['data'][this.id + '[id]'] = function() {
+                  return String(object_id);
+                }
+              }
+              break;
+
             default:
           }
           if(rule == null) {
