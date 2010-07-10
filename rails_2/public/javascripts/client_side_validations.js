@@ -6,29 +6,28 @@ if (typeof(jQuery) != "undefined") {
   
   $.extend($.fn, {
     clientSideValidations: function() {
-      var form         = this;
-      var object       = form.attr('object-csv');
-      var edit_pattern = new RegExp('^edit_' + object + '_(.+)', 'i');
-      var url          = '/validations.json?model=' + object;
-      var id           = form[0].id;
-      var object_id    = null;
-      if (edit_pattern.test(id)) {
-        object_id = Number(edit_pattern.exec(id)[1]);
-      }
-      var adapter = 'jquery.validate';
+      var form      = this;
+      var object    = form.attr('object-csv');
+      var id        = form[0].id;
+      var object_id = null;
+      var adapter   = 'jquery.validate';
       if (/new/.test(id)) {
         id = /new_(\w+)/.exec(id)[1]
       } else if (/edit/.test(id)) {
-        id = /edit_(\w+)_\d+/.exec(id)[1]
+        id        = /edit_(\w+)_\d+/.exec(id)[1]
+        object_id = /edit_\w+_(\d+)/.exec(id)[1]
       }
-      var client = new ClientSideValidations(id, adapter, object_id)
-      $.getJSON(url, function(json) {
-        var validations = client.adaptValidations(json);
-        form.validate({
-          rules:    validations.rules,
-          messages: validations.messages
-        });
-      });
+      if (eval("typeof(" + object + "_validation_options)") != "undefined") {
+        var options = eval(object + '_validation_options');
+      } else {
+        var options = { }
+      }
+      var client          = new ClientSideValidations(id, adapter, object_id)
+      var rules           = eval(object + '_validation_rules');
+      var validations     = client.adaptValidations(rules);
+      options['rules']    = validations.rules;
+      options['messages'] = validations.messages;
+      form.validate(options);
     }
   });
 
@@ -83,6 +82,10 @@ ClientSideValidations = function(id, adapter, object_id) {
                   return String(object_id);
                 }
               }
+              break;
+            case 'confirmation':
+              rule  = 'equalTo';
+              value = "[name='" + this.id + "[" + attr + "_confirmation]"  + "']";
               break;
 
             default:
