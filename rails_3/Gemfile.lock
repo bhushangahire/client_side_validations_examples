@@ -32,7 +32,7 @@ GEM
       activesupport (>= 3.0.0.beta)
     builder (2.1.2)
     cgi_multipart_eof_fix (2.5.0)
-    client_side_validations (2.4.1)
+    client_side_validations (2.5.1)
       json (= 1.4.3)
       validation_reflection (>= 0.3.6)
     columnize (0.3.1)
@@ -56,7 +56,7 @@ GEM
       gem_plugin (>= 0.2.3)
     polyglot (0.3.1)
     rack (1.1.0)
-    rack-mount (0.6.6)
+    rack-mount (0.6.8)
       rack
     rack-test (0.5.4)
       rack (>= 1.0)
@@ -90,7 +90,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  client_side_validations (= 2.4.1)
+  client_side_validations (= 2.5.1)
   mongrel
   rails (= 3.0.0.beta4)
   ruby-debug

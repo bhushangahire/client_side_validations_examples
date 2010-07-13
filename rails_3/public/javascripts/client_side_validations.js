@@ -3,6 +3,37 @@ if (typeof(jQuery) != "undefined") {
     var pattern = new RegExp(params, "i");
     return this.optional(element) || pattern.test(value); 
   }, jQuery.validator.format("Invalid format."));
+
+  jQuery.validator.addMethod("acceptance", function(value, element, params) { 
+    return element.checked; 
+  }, jQuery.validator.format("Was not accepted."));
+
+  jQuery.validator.addMethod("inclusion", function(value, element, params) { 
+    if (this.optional(element)) {
+      return true;
+    } else {
+      
+      for (var i=0, len=params.length; i<len; ++i ) {
+        if (value == String(params[i])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, jQuery.validator.format("Not included in list."));
+
+  jQuery.validator.addMethod("exclusion", function(value, element, params) { 
+    if (this.optional(element)) {
+      return true;
+    } else {
+      for (var i=0, len=params.length; i<len; ++i ) {
+        if (value == String(params[i])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }, jQuery.validator.format("Is reserved."));
   
   $.extend($.fn, {
     clientSideValidations: function() {
@@ -21,11 +52,12 @@ if (typeof(jQuery) != "undefined") {
       } else {
         var options = { }
       }
-      var client          = new ClientSideValidations(object, adapter, object_id)
-      var rules           = eval(object + '_validation_rules');
-      var validations     = client.adaptValidations(rules);
-      options['rules']    = validations.rules;
-      options['messages'] = validations.messages;
+      var client       = new ClientSideValidations(object, adapter, object_id)
+      var rules        = eval(object + '_validation_rules');
+      var validations  = client.adaptValidations(rules);
+      options.rules    = validations.rules;
+      options.messages = validations.messages;
+      options.ignore   = ':hidden';
       form.validate(options);
     }
   });
@@ -62,7 +94,15 @@ ClientSideValidations = function(id, adapter, object_id) {
               value = true;
               break;
             case 'length':
-              if('minimum' in this.validations[attr][validation]) {
+              if ('minimum' in this.validations[attr][validation] && 'maximum' in this.validations[attr][validation]) {
+                minrule                 = 'minlength';
+                rules[name][minrule]    = this.validations[attr][validation]['minimum'];
+                messages[name][minrule] = this.validations[attr][validation]['message_min'];
+
+                rule  = 'maxlength';
+                value = this.validations[attr][validation]['maximum'];
+                this.validations[attr][validation]['message'] = this.validations[attr][validation]['message_max']
+              } else if('minimum' in this.validations[attr][validation]) {
                 rule  = 'minlength';
                 value = this.validations[attr][validation]['minimum'];
               } else if('maximum' in this.validations[attr][validation]) {
@@ -85,6 +125,18 @@ ClientSideValidations = function(id, adapter, object_id) {
             case 'confirmation':
               rule  = 'equalTo';
               value = "[name='" + this.id + "[" + attr + "_confirmation]"  + "']";
+              break;
+            case 'acceptance':
+              rule  = 'acceptance';
+              value = true;
+              break;
+            case 'inclusion':
+              rule  = 'inclusion';
+              value = this.validations[attr][validation]['in']
+              break;
+            case 'exclusion':
+              rule  = 'exclusion';
+              value = this.validations[attr][validation]['in']
               break;
 
             default:
